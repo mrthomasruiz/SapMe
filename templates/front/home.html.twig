@@ -1,0 +1,42 @@
+{%  extends 'base.html.twig'   %}
+
+{% block title %}
+    {{  parent()  }}Accueil
+{% endblock %}
+
+
+{% block body %}
+
+
+    <div class="row justify-content-evenly">
+
+
+        {% for product in products  %}
+
+
+
+        <div class="card col-md-4 m-4 p-0 rounded border-success mb-3" style="max-width: 17rem;">
+            <img height="200" src="{{ asset('upload/'~product.picture) }}" alt="">
+            <div class="card-header ">{{ product.title }}</div>
+            <div class="card-body">
+                <h4 class="card-title">{{ product.price }}€</h4>
+                <p class="card-text">{{ product.description | default('Aucune description pour ce produit') }}</p>
+            </div>
+        </div>
+
+        {% endfor %}
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

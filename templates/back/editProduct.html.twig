@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} Modification produit
+{% endblock %}
+
+{% block body %}
+
+
+    {{ form_start(form) }}
+
+    {{ form_row(form.title) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.editPicture) }}
+    <img src="{{ asset('upload/')~product.picture }}" width="250" alt="">
+    {{ form_row(form.enregistrer) }}
+
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
