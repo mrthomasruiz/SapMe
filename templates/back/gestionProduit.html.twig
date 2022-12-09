@@ -16,6 +16,8 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Titre</th>
+            <th scope="col">Catégorie</th>
+            <th scope="col">Sous Catégorie</th>
             <th scope="col">Prix</th>
             <th scope="col">Photo</th>
             <th scope="col">Actions</th>
@@ -28,6 +30,8 @@
         <tr>
             <th scope="row">{{ product.id }}</th>
             <td>{{ product.title }}</td>
+            <td>{{ product.category.title | default('<span style="color:black;">Aucune catégorie définie</span>')| upper | raw  }}</td>
+            <td>{{ product.subCategory.title | default('<span style="color:black;">Aucune sous catégorie définie</span>')| upper | raw  }}</td>
             <td>{{ product.price }}€</td>
             <td><img src="{{ asset('upload/')~product.picture }}" width="100" alt=""></td>
             <td><a href="{{ path('editProduct', {'id': product.id}) }}" class="btn btn-light">Modifier</a>

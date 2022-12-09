@@ -19,7 +19,7 @@
             <th scope="row">{{ category.id }}</th>
             <td>{{  category.title }}</td>
             <td><a href="{{ path('editCategory', {'id': category.id}) }}" class="btn btn-info">Modifier</a>
-                <a href="" onclick="return confirm('Etes-vous sûr?')" class="btn btn-danger">Supprimer</a></td>
+                <a href="{{ path('deleteCategory', {'id': category.id }) }}" onclick="return confirm('Êtes-vous sûr?')" class="btn btn-danger">Supprimer</a></td>
         </tr>
         {% endfor %}
         </tbody>

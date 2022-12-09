@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\SubCategory;
 use App\Form\CategoryType;
 use App\Form\EditProductType;
 use App\Form\ProductType;
+use App\Form\SubCategoryType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use App\Repository\SubCategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -132,29 +135,26 @@ class BackController extends AbstractController
 
     #[Route('/category', name: 'category')]
     #[Route('/editCategory/{id}', name: 'editCategory')]
-    public function category( CategoryRepository $repository, EntityManagerInterface $manager, Request $request, $id=null): Response
+    public function category(CategoryRepository $repository, EntityManagerInterface $manager, Request $request, $id = null): Response
     {
 
-        $categories=$repository->findAll();
+        $categories = $repository->findAll();
 
-        if ($id)
-        {
-            $category=$repository->find($id);
-        }else{
+        if ($id) {
+            $category = $repository->find($id);
+        } else {
 
             $category = new Category();
         }
 
         $form = $this->createForm(CategoryType::class, $category);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($category);
             $manager->flush();
-            if ($id)
-            {
+            if ($id) {
                 $this->addFlash('success', 'Catégorie modifiée');
-            }else{
+            } else {
 
                 $this->addFlash('success', 'Catégorie ajoutée');
             }
@@ -162,14 +162,87 @@ class BackController extends AbstractController
             return $this->redirectToRoute('category');
 
 
+
         }
 
 
         return $this->render('back/category.html.twig', [
-            'form'=>$form->createView(),
-            'categories'=>$categories
+            'form' => $form->createView(),
+            'categories' => $categories
 
         ]);
     }
+
+    #[Route('/deleteCategory/{id}', name: 'deleteCategory')]
+    public function deleteCategory(CategoryRepository $repository, EntityManagerInterface $manager, $id): Response
+    {
+        $category = $repository->find($id);
+
+        $manager->remove($category);
+        $manager->flush();
+
+        return $this->redirectToRoute('category');
+
+    }
+
+        #[Route('/ajoutSousCategorie', name: 'ajoutSousCategorie')]
+            public function ajoutSousCategorie(Request $request, EntityManagerInterface $manager): Response
+            {
+                $subCategory = new subCategory();
+                $form = $this->createForm(SubCategoryType::class, $subCategory);
+
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()){
+
+                    $manager->persist($subCategory);
+                    $manager->flush();
+                }
+                return $this->render('back/ajoutSousCategorie.html.twig', [
+
+                    'form' => $form->createView()
+                ]);
+            }
+
+
+            #[Route('/editSubCategory/{id}', name: 'editSubCategory')]
+                public function editSousCategorie(Request $request, EntityManagerInterface $manager): Response
+                {
+
+
+                    return $this->render('back/editCategory.html.twig', [
+
+                    ]);
+                }
+
+                    #[Route('/gestionSubCategory', name: 'gestionSubCategory')]
+                        public function gestionSubCategory(SubCategoryRepository $subCategoryRepository): Response
+                        {
+                            $subCategories = $subCategoryRepository->findAll();
+
+                            return $this->render('back/gestionSubCategory.html.twig',[
+
+                                'subCategories' => $subCategories
+                            ]);
+                        }
+
+    //#[Route('/gestionProduit', name: 'gestionProduit')]
+   // public function gestionProduit(ProductRepository $productRepository): Response
+   // {
+    //    $products = $productRepository->findAll();
+
+    //    return $this->render('back/gestionProduit.html.twig', [
+    //        'products' => $products
+     //   ]);
+   // }
+                            #[Route('/deleteSubCategory', name: 'deleteSubCategory')]
+                                public function deleteSubCategory(): Response
+                                {
+
+
+                                    return $this->redirectToRoute('back/gestionSubCategory', [
+
+                                    ]);
+                                }
 
 }// Fermeture de controller

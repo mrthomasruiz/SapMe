@@ -2,7 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Product;
+use App\Entity\SubCategory;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -25,6 +28,21 @@ class EditProductType extends AbstractType
                     'placeholder'=>'Saisissez le titre du produit'
                 ]
             ])
+
+            ->add('category', EntityType::class,[
+                'label'=>'Catégorie',
+                'required'=>false,
+                'class'=>Category::class,
+                'choice_label'=>'title'
+            ])
+
+            ->add('subCategory', EntityType::class,[
+                'label'=>'Sous Catégorie',
+                'required'=>false,
+                'class'=>subCategory::class,
+                'choice_label'=>'title'
+            ])
+
             ->add('price', NumberType::class,[
                 'label'=>'Prix du produit',
                 'required'=>false,
@@ -32,6 +50,7 @@ class EditProductType extends AbstractType
                     'placeholder'=>'Saisissez le prix du produit'
                 ]
             ])
+
             ->add('description', TextareaType::class,[
                 'label'=>'Description du produit',
                 'required'=>false,

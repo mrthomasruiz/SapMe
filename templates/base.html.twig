@@ -42,12 +42,18 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarColor02">
-            <ul class="navbar-nav me-auto fs-4 ">
+            <ul class="navbar-nav me-auto fs-6 ">
                 <li class="nav-item">
                     <a class="nav-link fs-6" href="{{ path('home') }}">Accueil</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-6" href="{{ path('category') }}">Gestion Catégories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-6" href="{{ path('ajoutSousCategorie') }}">Ajout sous Catégories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-6" href="{{ path('gestionSubCategory') }}">Gestion sous Catégories</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link fs-6" href="{{ path('gestionProduit') }}">Gestion Produits</a>
@@ -57,14 +63,14 @@
                 </li>
             </ul>
         </div>
-        <form class="d-flex">
-            <input class="form-control me-sm-2" type="text" placeholder="Tapez votre recherche">
+        <form class="d-flex ">
+            <input class="form-control me-sm-2 fs-7" type="text" placeholder="Tapez votre recherche">
             <button class="btn btn-dark my-2 my-sm-0" type="submit"><i class="fa-solid fa-check"></i></button>
         </form>
-        <div class=" dropdown ms-5 me-2">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+        <div class=" dropstart ms-5 me-2 ">
+            <a class="nav-link dropdown-toggle " data-bs-toggle="dropdown" href="#" role="button"
                aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-user fa-xl text-dark "></i></a>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu ">
                 <a class="dropdown-item" href="#">Action</a>
                 <a class="dropdown-item" href="#">Another action</a>
                 <a class="dropdown-item" href="#">Something else here</a>
