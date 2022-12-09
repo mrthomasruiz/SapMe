@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <div class="glass">
+
+        <div class="neon-accueil">
+
+            <div class="container mb-4">
+
+                <form method="post">
+
+                    <h1 class="text-center text-uppercase my-4">Connexion</h1>
+
+                    <label for="inputEmail">Email</label>
+                    <input type="email" value="" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                    <label for="inputPassword">Mot de passe</label>
+                    <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+                    <button class="my-3 btn btn-lg btn-secondary" type="submit">
+                        se connecter
+                    </button>
+                </form></div></div></div>
+
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }}Connexion
+{% endblock %}
+

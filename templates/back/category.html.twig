@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ form(form) }}
+
+    <table class="table table-success table-striped mt-5">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Titre</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+
+        <tr>
+            <th scope="row">{{ category.id }}</th>
+            <td>{{  category.title }}</td>
+            <td><a href="{{ path('editCategory', {'id': category.id}) }}" class="btn btn-info">Modifier</a>
+                <a href="" onclick="return confirm('Etes-vous sûr?')" class="btn btn-danger">Supprimer</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }}Gestion Catégorie
+{% endblock %}
+

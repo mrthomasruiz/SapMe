@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Product;
+use App\Form\CategoryType;
 use App\Form\EditProductType;
 use App\Form\ProductType;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,10 +24,10 @@ class BackController extends AbstractController
     {
         // Cette méthode doit nous permettre de créer un nouveau produit.
         // On instancie donc un objet Product d'App\Entity que l'on va remplir de toutes ses propriétés.
-        $product=new Product();
+        $product = new Product();
 
         // On instancie un objet form via la méthode createForm() existante de notre abstractController.
-        $form=$this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductType::class, $product);
         // Cette méthode attend en argument le formulaire à utiliser et l'objet Entité auquel il fait référence.
         // Ainsi il va contrôler la conformité entre les champs de formulaire et les propriétés présents dans l'entité pour pouvoir remplir l'objet Product par lui-même.
 
@@ -37,28 +40,27 @@ class BackController extends AbstractController
 
         // Pour accéder à la surcouche de $_GET on utilise $request->query qui possède les mêmes méthodes que $request->request
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             //dd($product);
             //dd($form->get('picture')->getData());
             // On récupère les données de notre imput type file du formulaire qui a pour name 'picture'
-            $picture=$form->get('picture')->getData();
+            $picture = $form->get('picture')->getData();
             // Conditions d'upload de photo
-            if($picture){
+            if ($picture) {
 
-                $picture_bdd=date('YmhHis').uniqid().$picture->getClientOriginalName();
+                $picture_bdd = date('YmhHis') . uniqid() . $picture->getClientOriginalName();
 
                 $picture->move($this->getParameter('upload_directory'),
-                $picture_bdd);
+                    $picture_bdd);
                 // move() est une méthode de notre objet File qui permet de déplacer notre fichier temporaire uploadé à un emplacement donné (le 1er paramètre) et de nommé ce fichier (le second paramètre de la méthode)
 
                 $product->setPicture($picture_bdd);
                 $manager->persist($product);
                 $manager->flush();
 
-                $this->addFlash('success','Produit ajouté');
+                $this->addFlash('success', 'Produit ajouté');
                 return $this->redirectToRoute('gestionProduit');
-
 
 
             }
@@ -66,67 +68,108 @@ class BackController extends AbstractController
 
         return $this->render('back/ajoutProduit.html.twig', [
 
-            'form'=>$form->createView()
+            'form' => $form->createView()
         ]);
     }
 
     #[Route('/gestionProduit', name: 'gestionProduit')]
-        public function gestionProduit(ProductRepository $productRepository): Response
-            {
-        $products=$productRepository->findAll();
+    public function gestionProduit(ProductRepository $productRepository): Response
+    {
+        $products = $productRepository->findAll();
 
-                return $this->render('back/gestionProduit.html.twig', [
-                    'products'=>$products
-                ]);
+        return $this->render('back/gestionProduit.html.twig', [
+            'products' => $products
+        ]);
+    }
+
+
+    #[Route('/editProduct/{id}', name: 'editProduct')]
+    public function editProduct(Product $product, Request $request, EntityManagerInterface $manager): Response
+    {
+
+        $form = $this->createForm(EditProductType::class,
+            $product);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('editPicture')->getData()) {
+                $picture = $form->get('editPicture')->getData();
+                $picture_bdd = date('YmdHis') . uniqid() . $picture->getClientOriginalName();
+
+                $picture->move($this->getParameter('upload_directory'), $picture_bdd);
+                unlink($this->getParameter('upload_directory') . '/' . $product->getPicture());
+                $product->setPicture($picture_bdd);
+
+
             }
 
+            $manager->persist($product);
+            $manager->flush();
 
-        #[Route('/editProduct/{id}', name: 'editProduct')]
-            public function editProduct(Product $product, Request $request, EntityManagerInterface $manager): Response
+            $this->addFlash('success', 'Produit modifié');
+            return $this->redirectToRoute('gestionProduit');
+
+        }
+
+        return $this->render('back/editProduct.html.twig', [
+            'form' => $form->createView(),
+            'product' => $product
+        ]);
+    }
+
+    #[Route('/deleteProduct/{id}', name: 'deleteProduct')]
+    public function deleteProduct(Product $product, EntityManagerInterface $manager): Response
+    {
+        $manager->remove($product);
+        $manager->flush();
+
+        $this->addFlash('success', 'Produit supprimé !!!');
+
+        return $this->redirectToRoute('gestionProduit');
+    }
+
+
+    #[Route('/category', name: 'category')]
+    #[Route('/editCategory/{id}', name: 'editCategory')]
+    public function category( CategoryRepository $repository, EntityManagerInterface $manager, Request $request, $id=null): Response
+    {
+
+        $categories=$repository->findAll();
+
+        if ($id)
+        {
+            $category=$repository->find($id);
+        }else{
+
+            $category = new Category();
+        }
+
+        $form = $this->createForm(CategoryType::class, $category);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid())
+        {
+            $manager->persist($category);
+            $manager->flush();
+            if ($id)
             {
+                $this->addFlash('success', 'Catégorie modifiée');
+            }else{
 
-                $form=$this->createForm(EditProductType::class,
-                $product);
-
-                $form->handleRequest($request);
-
-                if ($form->isSubmitted() && $form->isValid())
-                {
-                    if ($form->get('editPicture')->getData()){
-                        $picture=$form->get('editPicture')->getData();
-                        $picture_bdd=date('YmhHis').uniqid() . $picture->getClientOriginalName();
-
-                        $picture->move($this->getParameter('upload_directory'), $picture_bdd);
-                        unlink($this->getParameter('upload_directory').'/' . $product->getPicture());
-                        $product->setPicture($picture_bdd);
-
-
-                    }
-
-                    $manager->persist($product);
-                    $manager->flush();
-
-                    $this->addFlash('success','Produit modifié');
-                    return $this->redirectToRoute('gestionProduit');
-
-                }
-
-                return $this->render('back/editProduct.html.twig', [
-                    'form'=>$form->createView(),
-                    'product'=>$product
-                ]);
+                $this->addFlash('success', 'Catégorie ajoutée');
             }
 
-                #[Route('/deleteProduct/{id}', name: 'deleteProduct')]
-                    public function deleteProduct(Product $product, EntityManagerInterface $manager): Response
-                    {
-                        $manager->remove($product);
-                        $manager->flush();
+            return $this->redirectToRoute('category');
 
-                        $this->addFlash('success', 'Produit supprimé !!!');
 
-                        return $this->redirectToRoute('gestionProduit');
-                    }
+        }
 
+
+        return $this->render('back/category.html.twig', [
+            'form'=>$form->createView(),
+            'categories'=>$categories
+
+        ]);
+    }
 
 }// Fermeture de controller

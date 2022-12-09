@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;use Symfony\Component\Validator\Constraint;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'],message: 'Cet email est déjà associé à un compte existant')]
@@ -19,13 +20,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Ce champ est obligatoire')]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 2, minMessage: 'Votre nom doit contenir 2 caractères minimum',max: 20, maxMessage: 'Maximum de 20 caractères')]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
+    #[Assert\EqualTo(propertyPath: 'password', message: 'Les mots de passe ne sont pas identiques')]
+    public ?string $confirmPassword =null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
